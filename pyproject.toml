@@ -1,0 +1,30 @@
+[project]
+name = "llm-quant-tool"
+version = "0.6.0"
+description = "PTQ quantisers: BnB-FP4, SmoothQuant-FP8, LLM Compressor AWQ-INT4 & GPTQ-INT4"
+requires-python = ">=3.9"
+
+# ----- 1️⃣  **ARRAY**, not mapping  ----------------------------------------
+dependencies = [
+  "torch>=2.2.0",
+  "transformers>=4.42.0",
+  "datasets>=2.19.0",
+  "safetensors>=0.4.3",
+  "tqdm>=4.66.4",
+  "pyyaml>=6.0.1",
+]
+# ---------------------------------------------------------------------------
+
+[project.optional-dependencies]
+bnb_fp4  = ["bitsandbytes>=0.43.0"]
+fp8      = ["transformer-engine>=1.6.1 ; platform_system == 'Linux'"]
+awq      = ["llmcompressor>=0.6.0"]
+gptq     = ["gptqmodel>=2.0.0"]
+dev      = ["pytest>=7.0.0", "black>=22.0.0", "flake8>=4.0.0"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+
+[tool.setuptools.packages.find]
+include = ["llm_quant_tool*"]
+exclude = ["configs*", "quant*"]

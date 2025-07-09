@@ -1,0 +1,16 @@
+model_name_or_path: "distilgpt2"
+method: "bnb_fp4"
+
+# data section kept for consistency but not used
+dataset_name: "wikitext"
+dataset_config: "wikitext-2-raw-v1"
+dataset_split: "validation"
+num_calibration_samples: 8
+block_size: 2048
+
+group_size: 128
+compute_dtype: "bfloat16"
+bnb_quant_type: "nf4"        # or "fp4" (nf4 required for CPU)
+
+out_dir: "./quantized/bnb_fp4"
+seed: 42

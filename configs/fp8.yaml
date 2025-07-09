@@ -1,0 +1,12 @@
+model_name_or_path: "distilgpt2"
+method: "fp8"
+alpha: 0.5
+
+dataset_name: "wikitext"
+dataset_config: "wikitext-2-raw-v1"
+dataset_split: "validation"
+num_calibration_samples: 128
+block_size: 1024
+
+out_dir: "./quantized/fp8"
+seed: 42

@@ -1,0 +1,18 @@
+model_name_or_path: "distilgpt2"
+method: "gptq"
+
+# data section
+dataset_name: "brando/small-c4-dataset"
+dataset_config: null
+dataset_split: "train"
+num_calibration_samples: 256
+block_size: 512
+
+# GPTQ specific parameters
+gptq_bits: 4
+gptq_group_size: 128
+gptq_desc_act: false
+gptq_force_cpu: false
+
+out_dir: "./quantized/gptq"
+seed: 42

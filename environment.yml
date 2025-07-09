@@ -1,0 +1,12 @@
+name: llm-quant-tool
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.10
+  - pytorch>=2.2
+  - pytorch-cuda=12.4    # Updated CUDA version for better compatibility
+  - pip>=23.3
+  - git                  # needed for some package installations
+  - pip:
+      - "-e .[bnb_fp4,fp8,awq,gptq]"  # Install all quantization backends

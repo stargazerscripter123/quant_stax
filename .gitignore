@@ -1,0 +1,107 @@
+# Byte-code / build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+build/
+dist/
+
+# Virtual environments & IDEs
+.venv/
+.env/
+.envrc
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python specific
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Model artifacts and data
+quantized/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.model
+*.h5
+*.onnx
+*.tflite
+*.pb
+
+# Dataset cache
+.cache/
+cache/
+data/
+datasets/
+
+# Logs and debugging
+*.log
+logs/
+sparse_logs/
+debug_*.py
+test_debug*.py
+temp_*.py
+tmp_*.py
+
+# HuggingFace cache
+.cache/huggingface/
+transformers_cache/
+
+# ML experiment tracking
+wandb/
+mlruns/
+runs/
+
+# Temporary files
+*.tmp
+*.temp
+.temporary/
+
+# Development and testing
+validate_install.py
+debug_*
+scratch*.py
+
+# Configuration overrides
+config_local.yaml
+local_config.yaml
+*_local.yaml
+
+# Benchmarking and profiling
+benchmark_results/
+profiling_results/
+*.prof

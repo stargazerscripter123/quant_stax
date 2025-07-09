@@ -1,0 +1,13 @@
+model_name_or_path: "distilgpt2"
+method: "awq"
+
+dataset_name: "wikitext"
+dataset_config: "wikitext-2-raw-v1"
+dataset_split: "validation"
+num_calibration_samples: 128
+block_size: 1024
+
+group_size: 128
+awq_bits: 4
+out_dir: "./quantized/awq"
+seed: 42
