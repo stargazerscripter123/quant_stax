@@ -1,8 +1,28 @@
+# LLM Quant Tool - Version 0.6.1
+# NOTE: NumPy constrained to <2.0 due to llmcompressor compatibility
+# FP8 backend available with optional transformer-engine acceleration
+
 [project]
 name = "llm-quant-tool"
-version = "0.6.0"
-description = "PTQ quantisers: BnB-FP4, SmoothQuant-FP8, LLM Compressor AWQ-INT4 & GPTQ-INT4"
+version = "0.6.1"
+description = "PTQ quantisers: BnB-FP4, LLM Compressor AWQ-INT4, GPTQ-INT4 & FP8"
+license = {text = "MIT"}
 requires-python = ">=3.9"
+readme = "README.md"
+keywords = ["quantization", "pytorch", "transformers", "llm", "deep-learning", "model-compression"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 
 # ----- 1️⃣  **ARRAY**, not mapping  ----------------------------------------
 dependencies = [
@@ -12,15 +32,18 @@ dependencies = [
   "safetensors>=0.4.3",
   "tqdm>=4.66.4",
   "pyyaml>=6.0.1",
+  "numpy>=1.17.0,<2.0",  # Constrained for llmcompressor compatibility
+  "evaluate>=0.4.0",     # Added for evaluation functionality
 ]
 # ---------------------------------------------------------------------------
 
 [project.optional-dependencies]
 bnb_fp4  = ["bitsandbytes>=0.43.0"]
-fp8      = ["transformer-engine>=1.6.1 ; platform_system == 'Linux'"]
-awq      = ["llmcompressor>=0.6.0"]
+fp8      = ["transformer-engine>=2.4.0; sys_platform=='linux'"]  # Linux-only, optional acceleration
+awq      = ["llmcompressor>=0.6.0", "numpy>=1.17.0,<2.0"]  # Ensure numpy compatibility
 gptq     = ["gptqmodel>=2.0.0"]
 dev      = ["pytest>=7.0.0", "black>=22.0.0", "flake8>=4.0.0"]
+all      = ["bitsandbytes>=0.43.0", "llmcompressor>=0.6.0", "gptqmodel>=2.0.0", "transformer-engine>=2.4.0; sys_platform=='linux'"]
 
 [tool.pytest.ini_options]
 addopts = "-q"

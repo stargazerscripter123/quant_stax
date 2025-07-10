@@ -1,0 +1,99 @@
+accelerate==1.8.1
+aiohappyeyeballs==2.6.1
+aiohttp==3.12.13
+aiosignal==1.4.0
+annotated-types==0.7.0
+async-timeout==5.0.1
+attrs==25.3.0
+autoawq==0.2.9
+autopep8==2.3.2
+bitsandbytes==0.46.1
+certifi==2025.7.9
+charset-normalizer==3.4.2
+compressed-tensors==0.10.2
+datasets==3.6.0
+device-smi==0.4.1
+dill==0.3.8
+evaluate==0.4.4
+exceptiongroup @ file:///croot/exceptiongroup_1706031385326/work
+filelock==3.18.0
+frozenlist==1.7.0
+fsspec==2025.3.0
+gmpy2 @ file:///home/conda/feedstock_root/build_artifacts/gmpy2_1745509363766/work
+gptqmodel==2.0.0+cu124torch2.5
+hf-xet==1.1.5
+hf_transfer==0.1.9
+huggingface-hub==0.33.2
+idna==3.10
+importlib_metadata==8.7.0
+iniconfig @ file:///home/linux1/recipes/ci/iniconfig_1610983019677/work
+Jinja2==3.1.6
+-e git+https://github.com/stargazerscripter123/quant_stax.git@1c197c30b83b0a39a903322b101897d3b8fa7668#egg=llm_quant_tool
+llmcompressor==0.6.0
+logbar==0.0.3
+loguru==0.7.3
+MarkupSafe==3.0.2
+mpmath==1.3.0
+multidict==6.6.3
+multiprocess==0.70.16
+networkx==3.4.2
+numpy==1.26.4
+nvidia-cublas-cu12==12.4.5.8
+nvidia-cuda-cupti-cu12==12.4.127
+nvidia-cuda-nvrtc-cu12==12.4.127
+nvidia-cuda-runtime-cu12==12.4.127
+nvidia-cudnn-cu12==9.1.0.70
+nvidia-cufft-cu12==11.2.1.3
+nvidia-cufile-cu12==1.11.1.6
+nvidia-curand-cu12==10.3.5.147
+nvidia-cusolver-cu12==11.6.1.9
+nvidia-cusparse-cu12==12.3.1.170
+nvidia-cusparselt-cu12==0.6.3
+nvidia-ml-py==12.575.51
+nvidia-nccl-cu12==2.21.5
+nvidia-nvjitlink-cu12==12.4.127
+nvidia-nvtx-cu12==12.4.127
+optree @ file:///home/conda/feedstock_root/build_artifacts/optree_1748442447565/work
+packaging==25.0
+pandas==2.3.1
+pillow==11.3.0
+pluggy @ file:///croot/pluggy_1733169602837/work
+propcache==0.3.2
+protobuf==6.31.1
+psutil==7.0.0
+pyarrow==20.0.0
+pybind11 @ file:///D:/bld/pybind11-split_1747934313674/work
+pybind11_global @ file:///home/conda/feedstock_root/build_artifacts/pybind11-split_1747934270866/work
+pycodestyle==2.14.0
+pydantic==2.11.7
+pydantic_core==2.33.2
+Pygments @ file:///croot/pygments_1744664109463/work
+pynvml==12.0.0
+pytest @ file:///croot/pytest_1750675189633/work
+python-dateutil==2.9.0.post0
+pytz==2025.2
+PyYAML==6.0.2
+random_word==1.0.13
+regex==2024.11.6
+requests==2.32.4
+safetensors==0.5.3
+six==1.17.0
+sympy==1.13.1
+threadpoolctl==3.6.0
+tokenicer==0.0.4
+tokenizers==0.20.3
+tomli @ file:///opt/conda/conda-bld/tomli_1657175507142/work
+torch==2.5.1
+torchaudio==2.5.1+cu121
+torchvision==0.20.1+cu121
+tqdm==4.67.1
+transformers==4.45.0
+triton==3.1.0
+typing-inspection==0.4.1
+typing_extensions==4.14.1
+tzdata==2025.2
+urllib3==2.5.0
+xxhash==3.5.0
+yarl==1.20.1
+zipp==3.23.0
+zstandard==0.23.0

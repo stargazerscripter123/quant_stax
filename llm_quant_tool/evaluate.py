@@ -1,7 +1,12 @@
 from __future__ import annotations
 import math, logging
+import torch
 from torch.utils.data import DataLoader
-from datasets import load_metric
+try:
+    from datasets import load_metric
+except ImportError:
+    # load_metric was deprecated, use evaluate instead
+    from evaluate import load as load_metric
 from transformers import AutoModelForCausalLM
 from .config import QuantConfig
 from .data import prepare_calibration_dataset

@@ -72,8 +72,6 @@ datasets/
 *.log
 logs/
 sparse_logs/
-debug_*.py
-test_debug*.py
 temp_*.py
 tmp_*.py
 
@@ -92,9 +90,12 @@ runs/
 .temporary/
 
 # Development and testing
-validate_install.py
-debug_*
 scratch*.py
+
+# Debug directory outputs
+debug/test_output/
+debug/test_cli_output/
+debug/*.log
 
 # Configuration overrides
 config_local.yaml

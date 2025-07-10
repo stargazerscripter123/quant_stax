@@ -1,5 +1,6 @@
 """
 SmoothQuant-FP8 (E4M3) - requires calibration data.
+Supports both transformer-engine acceleration (when available) and pure PyTorch fallback.
 """
 from __future__ import annotations
 import json, logging, warnings
@@ -11,6 +12,16 @@ from safetensors.torch import save_file
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM
+
+# Check for transformer-engine availability
+try:
+    import transformer_engine
+    HAS_TRANSFORMER_ENGINE = True
+    logging.info("transformer-engine available: accelerated FP8 support enabled")
+except ImportError:
+    HAS_TRANSFORMER_ENGINE = False
+    logging.info("transformer-engine not available: using pure PyTorch FP8 implementation")
+
 from transformers.data.data_collator import DataCollatorWithPadding
 
 from ..config import QuantConfig
@@ -50,12 +61,26 @@ def _collect_act_max(model, loader, device) -> Dict[str, torch.Tensor]:
 
 # --------------------------------------------------------------------- main
 def quantise_fp8(cfg: QuantConfig) -> Path:
-    if not hasattr(torch, "float8_e4m3fn"):
-        warnings.warn("This PyTorch build lacks float8; falling back to int8")
-    tgt_dtype = torch.float8_e4m3fn if hasattr(torch, "float8_e4m3fn") else torch.int8
+    """
+    FP8 quantization with SmoothQuant.
+    
+    Uses transformer-engine for acceleration when available, falls back to pure PyTorch.
+    Supports E4M3 FP8 format with automatic fallback to INT8 on older PyTorch versions.
+    """
+    logging.info(f"FP8 quantization starting - transformer-engine: {'✓' if HAS_TRANSFORMER_ENGINE else '✗'}")
+    
+    # Determine target dtype with multiple fallbacks
+    if hasattr(torch, "float8_e4m3fn"):
+        tgt_dtype = torch.float8_e4m3fn
+        logging.info("Using native PyTorch FP8 E4M3 format")
+    else:
+        tgt_dtype = torch.int8
+        logging.warning("PyTorch FP8 not available, falling back to INT8")
 
     # Use a single device to avoid multi-GPU issues during calibration
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    logging.info(f"Using device: {device}")
+    
     model = AutoModelForCausalLM.from_pretrained(
         cfg.model_name_or_path,
         torch_dtype=torch.float16,

@@ -1,3 +1,7 @@
+# LLM Quant Tool Conda Environment
+# NOTE: NumPy constrained to <2.0 due to llmcompressor compatibility
+# FP8 backend disabled due to transformer-engine platform issues
+
 name: llm-quant-tool
 channels:
   - conda-forge
@@ -6,7 +10,9 @@ dependencies:
   - python=3.10
   - pytorch>=2.2
   - pytorch-cuda=12.4    # Updated CUDA version for better compatibility
+  - numpy>=1.17.0,<2.0   # Constrained for llmcompressor compatibility
   - pip>=23.3
   - git                  # needed for some package installations
   - pip:
-      - "-e .[bnb_fp4,fp8,awq,gptq]"  # Install all quantization backends
+      - "-e .[bnb_fp4,awq,gptq]"  # fp8 disabled due to transformer-engine compatibility issues
+      - "evaluate>=0.4.0"         # Added for evaluation functionality
