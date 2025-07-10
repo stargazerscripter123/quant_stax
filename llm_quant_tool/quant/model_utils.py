@@ -27,7 +27,9 @@ def detect_model_type(model_path: str) -> str:
     # Fall back to path-based detection
     model_path_lower = model_path.lower()
     
-    if "qwen3" in model_path_lower:
+    if "whisper" in model_path_lower:
+        return "whisper"
+    elif "qwen3" in model_path_lower:
         return "qwen3"
     elif "qwen2.5" in model_path_lower or "qwen2_5" in model_path_lower:
         # Check if it's a vision-language model
@@ -75,7 +77,9 @@ def detect_model_architecture(model_path: str) -> str | None:
                 logging.info(f"Detected architecture from config: {arch_name}")
                 
                 # Map architecture names to our model types
-                if "qwen2vlforconditionalgeneration" in arch_name:
+                if "whisperforconditionalgeneration" in arch_name:
+                    return "whisper"
+                elif "qwen2vlforconditionalgeneration" in arch_name:
                     return "qwen2_vl"
                 elif "qwen2_5vlforconditionalgeneration" in arch_name:
                     return "qwen2.5_vl"
@@ -107,10 +111,17 @@ def get_model_config(model_type: str) -> Dict[str, Any]:
     """
     # Common configurations for different model types
     configs = {
+        "whisper": {
+            "model_class": "WhisperForConditionalGeneration",
+            "tokenizer_class": "AutoProcessor",
+            "trust_remote_code": True,
+            "use_fast": False,
+            "torch_dtype": "auto"
+        },
         "llama": {
             "model_class": "AutoModelForCausalLM",
             "tokenizer_class": "AutoTokenizer",
-            "trust_remote_code": False,
+            "trust_remote_code": True,
             "use_fast": False,
             "torch_dtype": "auto"
         },
@@ -152,7 +163,7 @@ def get_model_config(model_type: str) -> Dict[str, Any]:
         "mixtral": {
             "model_class": "AutoModelForCausalLM",
             "tokenizer_class": "AutoTokenizer",
-            "trust_remote_code": False,
+            "trust_remote_code": True,
             "use_fast": False,
             "torch_dtype": "auto"
         },
@@ -205,6 +216,14 @@ def load_model_and_tokenizer(model_path: str, model_type: str) -> Tuple[Any, Any
     # Import the appropriate classes
     if config["model_class"] == "AutoModelForCausalLM":
         model_class = AutoModelForCausalLM
+    elif config["model_class"] == "WhisperForConditionalGeneration":
+        # Import Whisper models
+        try:
+            from transformers import WhisperForConditionalGeneration
+            model_class = WhisperForConditionalGeneration
+        except ImportError:
+            logging.warning("Whisper models not available, falling back to AutoModelForCausalLM")
+            model_class = AutoModelForCausalLM
     else:
         # For vision-language models, try to import them
         try:
@@ -220,6 +239,14 @@ def load_model_and_tokenizer(model_path: str, model_type: str) -> Tuple[Any, Any
     
     if config["tokenizer_class"] == "AutoTokenizer":
         tokenizer_class = AutoTokenizer
+    elif config["tokenizer_class"] == "AutoProcessor":
+        # For processors (Whisper, etc.)
+        try:
+            from transformers import AutoProcessor
+            tokenizer_class = AutoProcessor
+        except ImportError:
+            logging.warning("AutoProcessor not available, falling back to AutoTokenizer")
+            tokenizer_class = AutoTokenizer
     else:
         # For vision processors
         try:
@@ -259,6 +286,6 @@ def get_supported_model_types() -> list[str]:
         List of supported model type strings
     """
     return [
-        "auto", "qwen2", "qwen2.5", "qwen3", "qwen2_vl", "qwen2.5_vl", 
+        "auto", "whisper", "qwen2", "qwen2.5", "qwen3", "qwen2_vl", "qwen2.5_vl", 
         "llama", "mixtral", "deepseek", "decilm"
     ]

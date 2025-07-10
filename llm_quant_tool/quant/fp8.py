@@ -151,6 +151,18 @@ def quantise_fp8(cfg: QuantConfig) -> Path:
     """
     Apply FP8 quantization. Supports both static SmoothQuant and dynamic quantization.
     """
+    # Detect model type for special handling
+    model_type = getattr(cfg, 'model_type', 'auto')
+    if model_type == "auto":
+        model_type = detect_model_type(cfg.model_name_or_path)
+        logging.info(f"Auto-detected model type: {model_type}")
+    
+    # For Whisper models, always use dynamic FP8 as SmoothQuant is not suitable for encoder-decoder models
+    if model_type == "whisper":
+        logging.info("Whisper model detected, using dynamic FP8 quantization (SmoothQuant not supported for encoder-decoder models)")
+        cfg.fp8_dynamic = True
+        return quantise_fp8_dynamic(cfg)
+    
     if cfg.fp8_dynamic:
         logging.info("Using dynamic FP8 quantization")
         return quantise_fp8_dynamic(cfg)

@@ -1,10 +1,21 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, logging, sys
-from .config import load_config
-from .quant import quantise
-from .evaluate import perplexity
-from .quant.model_utils import get_supported_model_types
+import argparse, logging, sys, os
+
+# Handle both direct execution and module import
+if __name__ == "__main__" and __package__ is None:
+    # Add parent directory to path for direct execution
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from llm_quant_tool.config import load_config
+    from llm_quant_tool.quant import quantise
+    from llm_quant_tool.eval_utils import perplexity
+    from llm_quant_tool.quant.model_utils import get_supported_model_types
+else:
+    # Module import
+    from .config import load_config
+    from .quant import quantise
+    from .eval_utils import perplexity
+    from .quant.model_utils import get_supported_model_types
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 

@@ -30,7 +30,7 @@ class QuantConfig:
     alpha: float = 0.5
     fp8_dynamic: bool = False           # Enable dynamic FP8 quantization
     fp8_scheme: str = "FP8_DYNAMIC"     # FP8_DYNAMIC or NVFP4A16
-    model_type: str = "auto"            # auto-detect or specify: qwen2, qwen2.5, qwen3, qwen2_vl, qwen2.5_vl, llama, mixtral, deepseek, decilm
+    model_type: str = "auto"            # auto-detect or specify: whisper, qwen2, qwen2.5, qwen3, qwen2_vl, qwen2.5_vl, llama, mixtral, deepseek, decilm
     test_generation: bool = False       # Test generation after quantization
 
     # AWQ

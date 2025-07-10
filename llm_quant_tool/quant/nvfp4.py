@@ -50,11 +50,21 @@ def quantise_nvfp4(cfg: QuantConfig) -> Path:
     model, tokenizer = load_model_and_tokenizer(cfg.model_name_or_path, model_type)
     
     # Configure the quantization recipe for NVFP4A16
-    recipe = QuantizationModifier(
-        targets="Linear", 
-        scheme="NVFP4A16", 
-        ignore=["lm_head"]
-    )
+    # For Whisper models, we need to target all Linear layers including projections
+    if model_type == "whisper":
+        recipe = QuantizationModifier(
+            targets="Linear", 
+            scheme="NVFP4A16",
+            ignore=[]  # Don't ignore any layers for Whisper
+        )
+        logging.info("Using Whisper-specific NVFP4A16 configuration (all Linear layers)")
+    else:
+        recipe = QuantizationModifier(
+            targets="Linear", 
+            scheme="NVFP4A16", 
+            ignore=["lm_head"]
+        )
+        logging.info("Using standard NVFP4A16 configuration")
     
     # Set output directory
     output_dir = Path(cfg.out_dir) / f"model-nvfp4a16-{model_type}"

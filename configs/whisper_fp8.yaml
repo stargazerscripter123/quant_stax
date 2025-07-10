@@ -1,0 +1,21 @@
+# Whisper Dynamic FP8 Configuration
+# Optimized for Whisper encoder-decoder models
+
+model_name_or_path: "openai/whisper-base"
+dataset_name: "hf-internal-testing/librispeech_asr"
+dataset_config: "clean"
+dataset_split: "validation"
+num_calibration_samples: 128
+block_size: 2048
+
+method: "fp8"
+
+# Dynamic FP8 settings
+fp8_dynamic: true
+fp8_scheme: "FP8_DYNAMIC"
+model_type: "whisper"
+test_generation: false
+
+seed: 42
+out_dir: "./quantized"
+trust_remote_code: false

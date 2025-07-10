@@ -45,6 +45,9 @@ gptq     = ["gptqmodel>=2.0.0"]
 dev      = ["pytest>=7.0.0", "black>=22.0.0", "flake8>=4.0.0"]
 all      = ["bitsandbytes>=0.43.0", "llmcompressor>=0.6.0", "gptqmodel>=2.0.0", "transformer-engine>=2.4.0; sys_platform=='linux'"]
 
+[project.scripts]
+llm-quant-tool = "llm_quant_tool.cli:main"
+
 [tool.pytest.ini_options]
 addopts = "-q"
 

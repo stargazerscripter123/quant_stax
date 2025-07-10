@@ -22,7 +22,7 @@ def prepare_calibration_dataset(cfg: QuantConfig):
             max_length=cfg.block_size,
             truncation=True,
             padding="max_length",
-            return_tensors=None,  # Return lists, let DataLoader handle tensor conversion
+            return_tensors="pt",  # Return tensors directly
         )
 
     ds = ds.map(_tok, batched=True, remove_columns=ds.column_names)

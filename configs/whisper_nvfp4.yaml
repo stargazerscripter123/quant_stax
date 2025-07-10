@@ -1,0 +1,19 @@
+# Whisper NVFP4A16 Configuration
+# Optimized for Whisper encoder-decoder models
+
+model_name_or_path: "openai/whisper-base"
+dataset_name: "hf-internal-testing/librispeech_asr"
+dataset_config: "clean"
+dataset_split: "validation"
+num_calibration_samples: 128
+block_size: 2048
+
+method: "nvfp4"
+
+# Model type settings
+model_type: "whisper"
+test_generation: false
+
+seed: 42
+out_dir: "./quantized"
+trust_remote_code: false

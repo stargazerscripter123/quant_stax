@@ -7,9 +7,9 @@ A unified PyTorch toolkit for Post-Training Quantization (PTQ) of Large Language
 | `method`  | Backend                | Status | Description |
 |-----------|------------------------|--------|-------------|
 | `bnb_fp4` | **bitsandbytes FP4**   | ✅     | 4-bit FP4 quantization using bitsandbytes |
-| `awq`     | LLM Compressor AWQ     | ✅     | Activation-aware Weight Quantization (INT4) |
+| `awq`     | **AWQ**                | ✅     | Activation-aware Weight Quantization (INT4) |
 | `gptq`    | **GPTQModel INT4**     | ✅     | GPTQ 4-bit quantization with GPU acceleration |
-| `fp8`     | SmoothQuant‑FP8        | ✅     | FP8 E4M3 quantization with optional transformer-engine acceleration |
+| `fp8`     | **SmoothQuant‑FP8**    | ✅     | FP8 E4M3 quantization with optional transformer-engine acceleration |
 | `fp8`     | **NVFP8**              | ✅     | NVFP8 quantization with auto model detection |
 | `nvfp4`   | **NVFP4A16**           | ✅     | NVIDIA FP4A16 quantization with advanced model detection |
 
@@ -99,6 +99,8 @@ Each quantization method has its own configuration file in the `configs/` direct
 - `configs/fp8.yaml` - SmoothQuant FP8 configuration
 - `configs/fp8_dynamic.yaml` - Dynamic FP8 configuration
 - `configs/nvfp4.yaml` - NVFP4A16 configuration
+- `configs/whisper_fp8.yaml` - Whisper FP8 configuration
+- `configs/whisper_nvfp4.yaml` - Whisper NVFP4 configuration
 
 ## Model Type Detection
 
@@ -107,6 +109,7 @@ The toolkit includes automatic model type detection that works across all quanti
 ### Supported Model Types
 
 - **`auto`** - Automatic detection (default)
+- **`whisper`** - Whisper speech recognition models
 - **`llama`** - LLaMA family models (Llama 2, Llama 3, etc.)
 - **`qwen2`** - Qwen2 models  
 - **`qwen2.5`** - Qwen2.5 models
@@ -134,6 +137,22 @@ python -m llm_quant_tool.cli --method awq --model-type qwen2.5
 
 # Vision-language models
 python -m llm_quant_tool.cli --method nvfp4 --model-type qwen2_vl
+
+# Whisper models
+python -m llm_quant_tool.cli --method nvfp4 --model-type whisper
+python -m llm_quant_tool.cli --fp8-dynamic --model-type whisper
+```
+
+### Whisper Model Support
+
+For Whisper models, SmoothQuant is not suitable for encoder-decoder architectures.
+
+```bash
+python -m llm_quant_tool.cli -c configs/whisper_fp8.yaml
+python -m llm_quant_tool.cli -c configs/whisper_nvfp4.yaml
+
+# CLI usage with specific Whisper model
+python -m llm_quant_tool.cli --fp8-dynamic --model-type whisper --model-name-or-path openai/whisper-large-v3
 ```
 
 ## Requirements
@@ -167,7 +186,9 @@ configs/                # Configuration files
 ├── fp8.yaml
 ├── fp8_dynamic.yaml
 ├── nvfp4.yaml
-└── llm_fp4.yaml
+├── llm_fp4.yaml
+├── whisper_fp8.yaml
+└── whisper_nvfp4.yaml
 
 debug/                  # Debug and validation scripts
 ├── README.md
