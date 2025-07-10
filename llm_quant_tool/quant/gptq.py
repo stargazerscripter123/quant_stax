@@ -6,6 +6,9 @@ import logging
 from pathlib import Path
 from ..config import QuantConfig
 
+# Import shared model utilities
+from .model_utils import detect_model_type, get_model_config
+
 def quantise_gptq(cfg: QuantConfig) -> Path:
     try:
         from gptqmodel import GPTQModel, QuantizeConfig  # type: ignore
@@ -13,6 +16,16 @@ def quantise_gptq(cfg: QuantConfig) -> Path:
         import torch  # type: ignore
     except ImportError as e:
         raise RuntimeError("Install with: pip install gptqmodel") from e
+
+    # Detect model type if set to auto
+    model_type = getattr(cfg, 'model_type', 'auto')
+    if model_type == "auto":
+        model_type = detect_model_type(cfg.model_name_or_path)
+        logging.info(f"Auto-detected model type: {model_type}")
+
+    # Get model configuration
+    model_config = get_model_config(model_type)
+    logging.info(f"Using model type: {model_type}")
 
     # Check GPU availability and memory
     if cfg.gptq_force_cpu:
@@ -42,7 +55,8 @@ def quantise_gptq(cfg: QuantConfig) -> Path:
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
         cfg.model_name_or_path,
-        trust_remote_code=cfg.trust_remote_code,
+        trust_remote_code=model_config["trust_remote_code"],
+        use_fast=model_config.get("use_fast", False)
     )
     
     # Set pad_token if it doesn't exist
@@ -63,7 +77,7 @@ def quantise_gptq(cfg: QuantConfig) -> Path:
     model = GPTQModel.from_pretrained(
         cfg.model_name_or_path,
         quantize_config=quantize_config,
-        trust_remote_code=cfg.trust_remote_code,
+        trust_remote_code=model_config["trust_remote_code"],
         device_map="auto" if device == "cuda" else None,
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
     )

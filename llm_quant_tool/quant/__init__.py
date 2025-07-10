@@ -16,4 +16,7 @@ def quantise(cfg: QuantConfig) -> Path:
     if cfg.method == "gptq":
         from .gptq import quantise_gptq
         return quantise_gptq(cfg)
+    if cfg.method == "nvfp4":
+        from .nvfp4 import quantise_nvfp4
+        return quantise_nvfp4(cfg)
     raise ValueError(f"Unknown method '{cfg.method}'")

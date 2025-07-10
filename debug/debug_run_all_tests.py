@@ -41,6 +41,8 @@ def main():
         ("debug_gptq_simple.py", "GPTQ Simple Test"),
         ("debug_awq_api.py", "AWQ API Test"),
         ("debug_fp8.py", "FP8 API Test"),
+        ("debug_fp8_dynamic.py", "Dynamic FP8 API Test"),
+        ("debug_nvfp4.py", "NVFP4A16 API Test"),
     ]
     
     results = []

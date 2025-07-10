@@ -61,6 +61,7 @@ quantized/
 *.onnx
 *.tflite
 *.pb
+*.json
 
 # Dataset cache
 .cache/

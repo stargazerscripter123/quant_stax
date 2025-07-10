@@ -6,27 +6,25 @@ import logging
 from pathlib import Path
 from ..config import QuantConfig
 
+# Import shared model utilities
+from .model_utils import detect_model_type, load_model_and_tokenizer
+
 def quantise_awq(cfg: QuantConfig) -> Path:
     try:
         from llmcompressor.transformers import oneshot  # type: ignore
-        from transformers import AutoTokenizer, AutoModelForCausalLM  # type: ignore
     except ImportError as e:
         raise RuntimeError("Install with: pip install llmcompressor") from e
 
     logging.info("Loading model and tokenizer …")
     
-    # Load model and tokenizer
-    model = AutoModelForCausalLM.from_pretrained(
-        cfg.model_name_or_path,
-        device_map="auto",
-        trust_remote_code=cfg.trust_remote_code,
-        torch_dtype="auto"
-    )
+    # Detect model type if set to auto
+    model_type = getattr(cfg, 'model_type', 'auto')
+    if model_type == "auto":
+        model_type = detect_model_type(cfg.model_name_or_path)
+        logging.info(f"Auto-detected model type: {model_type}")
     
-    tokenizer = AutoTokenizer.from_pretrained(
-        cfg.model_name_or_path,
-        trust_remote_code=cfg.trust_remote_code,
-    )
+    # Load model and tokenizer using shared utilities
+    model, tokenizer = load_model_and_tokenizer(cfg.model_name_or_path, model_type)
 
     logging.info("Running AWQ quantization with llm-compressor …")
     

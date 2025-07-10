@@ -1,0 +1,17 @@
+# NVFP4A16 Quantization Configuration
+# Uses llmcompressor for NVFP4A16 quantization with advanced model detection
+
+model_name_or_path: "distilgpt2"
+dataset_name: "wikitext"
+dataset_config: "wikitext-2-raw-v1"
+dataset_split: "validation"
+num_calibration_samples: 128
+block_size: 2048
+
+method: "nvfp4"
+model_type: "auto"         # auto-detect or specify: qwen2, llama, etc.
+test_generation: false     # Test generation after quantization
+
+seed: 42
+out_dir: "./quantized"
+trust_remote_code: false

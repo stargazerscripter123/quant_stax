@@ -81,6 +81,38 @@
 
 ---
 
+### 🔬 `debug_fp8_dynamic.py`
+
+**Purpose**: Dynamic FP8 quantization testing with llmcompressor
+**Usage**: `python debug_fp8_dynamic.py`
+**What it tests**:
+
+- Dynamic FP8 quantization imports and functionality
+- llmcompressor availability and features
+- Model type auto-detection capabilities
+- FP8_DYNAMIC and NVFP4A16 scheme support
+- CLI integration with new dynamic options
+
+**When to use**: Testing dynamic FP8 features or llmcompressor-based quantization
+
+---
+
+### 🔧 `debug_nvfp4.py`
+
+**Purpose**: NVFP4A16 quantization testing with llmcompressor
+**Usage**: `python debug_nvfp4.py`
+**What it tests**:
+
+- NVFP4A16 quantization imports and functionality
+- llmcompressor NVFP4A16 scheme support
+- Model type auto-detection capabilities
+- Quantization dispatcher integration
+- CLI integration with NVFP4 method
+
+**When to use**: Testing NVFP4A16 features or NVIDIA-specific quantization
+
+---
+
 ### 🎯 `debug_run_all_tests.py`
 
 **Purpose**: Comprehensive test runner that executes all debug scripts

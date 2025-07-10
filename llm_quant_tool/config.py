@@ -15,11 +15,11 @@ class QuantConfig:
     block_size: int = 2048
 
     # method
-    method: str = "llm_fp4"         # llm_fp4 | bnb_fp4 | fp8 | awq | gptq
+    method: str = "bnb_fp4"         # bnb_fp4 | fp8 | awq | gptq | nvfp4
 
     # LLM‑FP4 search
     search_rounds: int = 3
-    search_intervals: list[float] = (0.01, 1.2, 100)
+    search_intervals: tuple[float, float, float] = (0.01, 1.2, 100)
 
     # BnB‑FP4
     compute_dtype: str = "bfloat16"
@@ -28,6 +28,10 @@ class QuantConfig:
 
     # SmoothQuant‑FP8
     alpha: float = 0.5
+    fp8_dynamic: bool = False           # Enable dynamic FP8 quantization
+    fp8_scheme: str = "FP8_DYNAMIC"     # FP8_DYNAMIC or NVFP4A16
+    model_type: str = "auto"            # auto-detect or specify: qwen2, qwen2.5, qwen3, qwen2_vl, qwen2.5_vl, llama, mixtral, deepseek, decilm
+    test_generation: bool = False       # Test generation after quantization
 
     # AWQ
     awq_bits: int = 4
@@ -55,6 +59,6 @@ class QuantConfig:
 
 def load_config(p: str | Path | None) -> QuantConfig:
     if p is None:
-        logging.info("No --config given, defaulting to configs/llm_fp4.yaml")
-        p = Path(__file__).parent.parent / "configs" / "llm_fp4.yaml"
+        logging.info("No --config given, defaulting to configs/bnb_fp4.yaml")
+        p = Path(__file__).parent.parent / "configs" / "bnb_fp4.yaml"
     return QuantConfig.load(p)

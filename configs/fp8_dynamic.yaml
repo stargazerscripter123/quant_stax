@@ -1,0 +1,22 @@
+# FP8 Dynamic Quantization Configuration
+# Uses llmcompressor for dynamic FP8 quantization
+
+model_name_or_path: "distilgpt2"
+dataset_name: "wikitext"
+dataset_config: "wikitext-2-raw-v1"
+dataset_split: "validation"
+num_calibration_samples: 128
+block_size: 2048
+
+method: "fp8"
+fp8_dynamic: true
+fp8_scheme: "FP8_DYNAMIC"  # FP8_DYNAMIC or NVFP4A16
+model_type: "auto"         # auto-detect or specify: qwen2, llama, etc.
+test_generation: false     # Test generation after quantization
+
+# Traditional SmoothQuant settings (used when fp8_dynamic: false)
+alpha: 0.5
+
+seed: 42
+out_dir: "./quantized"
+trust_remote_code: false

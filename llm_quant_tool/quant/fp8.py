@@ -1,6 +1,7 @@
 """
 SmoothQuant-FP8 (E4M3) - requires calibration data.
 Supports both transformer-engine acceleration (when available) and pure PyTorch fallback.
+Also supports dynamic FP8 quantization using llmcompressor.
 """
 from __future__ import annotations
 import json, logging, warnings
@@ -13,6 +14,9 @@ from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM
 
+# Import shared model utilities
+from .model_utils import detect_model_type, get_model_config, load_model_and_tokenizer
+
 # Check for transformer-engine availability
 try:
     import transformer_engine
@@ -22,10 +26,93 @@ except ImportError:
     HAS_TRANSFORMER_ENGINE = False
     logging.info("transformer-engine not available: using pure PyTorch FP8 implementation")
 
+# Check for llmcompressor availability for dynamic quantization
+try:
+    from llmcompressor import oneshot
+    from llmcompressor.modifiers.quantization import QuantizationModifier
+    from llmcompressor.utils import dispatch_for_generation
+    HAS_LLMCOMPRESSOR = True
+    logging.info("llmcompressor available: dynamic FP8 quantization enabled")
+except ImportError:
+    HAS_LLMCOMPRESSOR = False
+    oneshot = None
+    QuantizationModifier = None
+    dispatch_for_generation = None
+    logging.info("llmcompressor not available: dynamic FP8 quantization disabled")
+
 from transformers.data.data_collator import DataCollatorWithPadding
 
 from ..config import QuantConfig
 from ..data import prepare_calibration_dataset
+
+# ------------------------------------------------------------------- model detection
+# ------------------------------------------------------------------- dynamic quantization
+def quantise_fp8_dynamic(cfg: QuantConfig) -> Path:
+    """
+    Apply dynamic FP8 quantization using llmcompressor.
+    """
+    if not HAS_LLMCOMPRESSOR or oneshot is None or QuantizationModifier is None:
+        raise RuntimeError("llmcompressor not available. Install with: pip install llmcompressor")
+    
+    # Detect model type if set to auto
+    model_type = cfg.model_type
+    if model_type == "auto":
+        model_type = detect_model_type(cfg.model_name_or_path)
+        logging.info(f"Auto-detected model type: {model_type}")
+    
+    # Load model and tokenizer using shared utilities
+    model, tokenizer = load_model_and_tokenizer(cfg.model_name_or_path, model_type)
+    
+    logging.info(f"Applying dynamic FP8 quantization with scheme: {cfg.fp8_scheme}")
+    
+    # Configure the quantization recipe
+    recipe = QuantizationModifier(
+        targets="Linear", 
+        scheme=cfg.fp8_scheme, 
+        ignore=["lm_head"]
+    )
+    
+    # Set output directory
+    output_dir = Path(cfg.out_dir) / f"model-fp8-dynamic-{cfg.fp8_scheme.lower()}"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    logging.info(f"Output directory: {output_dir}")
+    
+    # Apply quantization
+    oneshot(
+        model=model,
+        tokenizer=tokenizer,
+        recipe=recipe,
+        output_dir=str(output_dir)
+    )
+    
+    # Test generation if requested
+    if cfg.test_generation and dispatch_for_generation is not None:
+        logging.info("Testing generation after quantization...")
+        try:
+            dispatch_for_generation(model)
+            
+            # Simple test prompt
+            test_prompt = "Hello, how are you?"
+            inputs = tokenizer(test_prompt, return_tensors="pt")
+            
+            logging.info(f"Input: {test_prompt}")
+            with torch.no_grad():
+                outputs = model.generate(
+                    inputs.input_ids,
+                    max_new_tokens=50,
+                    do_sample=True,
+                    temperature=0.7,
+                    pad_token_id=tokenizer.eos_token_id if tokenizer.eos_token_id else tokenizer.pad_token_id
+                )
+            
+            response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+            logging.info(f"Output: {response}")
+        except Exception as e:
+            logging.warning(f"Generation test failed: {e}")
+    
+    logging.info(f"Dynamic FP8 quantization completed. Model saved to: {output_dir}")
+    return output_dir / "model.safetensors" if (output_dir / "model.safetensors").exists() else output_dir
 
 # ------------------------------------------------------------------- helpers
 def _iter_linear_modules(model):
@@ -61,6 +148,17 @@ def _collect_act_max(model, loader, device) -> Dict[str, torch.Tensor]:
 
 # --------------------------------------------------------------------- main
 def quantise_fp8(cfg: QuantConfig) -> Path:
+    """
+    Apply FP8 quantization. Supports both static SmoothQuant and dynamic quantization.
+    """
+    if cfg.fp8_dynamic:
+        logging.info("Using dynamic FP8 quantization")
+        return quantise_fp8_dynamic(cfg)
+    else:
+        logging.info("Using static SmoothQuant FP8 quantization")
+        return quantise_fp8_static(cfg)
+
+def quantise_fp8_static(cfg: QuantConfig) -> Path:
     """
     FP8 quantization with SmoothQuant.
     

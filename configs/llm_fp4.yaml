@@ -1,0 +1,24 @@
+# Default LLM-FP4 Configuration
+# Basic configuration for backward compatibility
+
+model_name_or_path: "facebook/opt-125m"
+dataset_name: "wikitext"
+dataset_config: "wikitext-2-raw-v1"
+dataset_split: "validation"
+num_calibration_samples: 128
+block_size: 2048
+
+method: "bnb_fp4"  # Default to bitsandbytes FP4
+
+# LLM‑FP4 search (not implemented but keeping for compatibility)
+search_rounds: 3
+search_intervals: [0.01, 1.2, 100]
+
+# BnB‑FP4
+compute_dtype: "bfloat16"
+bnb_quant_type: "fp4"
+group_size: 128
+
+seed: 42
+out_dir: "./quantized"
+trust_remote_code: false
